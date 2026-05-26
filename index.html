@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rhino Inks</title>
+    <style>
+        /* Google Fonts: UnifrakturMaguntia (Gothic/Tattoo Blackletter) and Cinzel (Razor-sharp serifs) */
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=UnifrakturMaguntia&display=swap');
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            background-color: #050505;
+            color: #fff;
+            font-family: 'Cinzel', serif;
+            overflow-x: hidden;
+        }
+
+        /* =========================================
+       NAVIGATION & LAYERS
+       ========================================= */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 2.5rem 5%;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            z-index: 10;
+            box-sizing: border-box;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0) 100%);
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 3.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #8a0303;
+            text-shadow: 0 0 15px rgba(138, 3, 3, 0.6);
+        }
+
+        /* Fixed Canvas Background */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            position: relative;
+            z-index: 1;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        #content-wrapper {
+            position: relative;
+            z-index: 3;
+        }
+
+        /* =========================================
+       TYPOGRAPHY & BUTTONS
+       ========================================= */
+        h1,
+        h2,
+        h3 {
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-weight: normal;
+            margin-top: 0;
+            letter-spacing: 2px;
+        }
+
+        h1 {
+            font-size: 7.5rem;
+            line-height: 1;
+            text-shadow: 0 6px 30px rgba(0, 0, 0, 1);
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        h2 {
+            font-size: 5rem;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 1);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        p {
+            font-size: 1.1rem;
+            font-weight: 400;
+            line-height: 1.8;
+            color: #ccc;
+            max-width: 650px;
+            text-shadow: 0 2px 15px rgba(0, 0, 0, 1);
+            margin-bottom: 3rem;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            text-align: center;
+            margin: 0 auto 4rem auto;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            display: inline-block;
+            padding: 1.2rem 3.5rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .btn-primary {
+            background-color: #fff;
+            color: #000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        .btn-primary:hover {
+            background-color: #8a0303;
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(138, 3, 3, 0.4);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: #fff;
+            border: 1px solid #fff;
+            margin-top: 3rem;
+        }
+
+        .btn-secondary:hover {
+            background-color: #fff;
+            color: #000;
+        }
+
+        /* =========================================
+       SECTION LAYOUTS
+       ========================================= */
+        .content-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 6rem 10%;
+            box-sizing: border-box;
+        }
+
+        .hero-section {
+            align-items: flex-start;
+            text-align: left;
+            padding-right: 40%;
+        }
+
+        /* Artists Grid */
+        .artists-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .artist-card {
+            position: relative;
+            aspect-ratio: 3/4;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .artist-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%) brightness(0.7) contrast(1.2);
+            transition: transform 0.6s ease, filter 0.6s ease;
+        }
+
+        .artist-card:hover img {
+            transform: scale(1.05);
+            filter: grayscale(0%) brightness(1) contrast(1);
+        }
+
+        .artist-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 2rem;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.95), transparent);
+            box-sizing: border-box;
+        }
+
+        .artist-info h3 {
+            margin: 0 0 5px 0;
+            font-size: 3rem;
+            text-align: left;
+        }
+
+        .artist-info span {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #8a0303;
+            text-align: left;
+            display: block;
+        }
+
+        /* Portfolio Grid */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .portfolio-item {
+            aspect-ratio: 1/1;
+            overflow: hidden;
+        }
+
+        .portfolio-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.6) contrast(1.1);
+            transition: all 0.4s ease;
+        }
+
+        .portfolio-item:hover img {
+            filter: brightness(1.1) contrast(1);
+            transform: scale(1.03);
+        }
+
+        /* =========================================
+       STUDIO / MAP SECTION
+       ========================================= */
+        .studio-container {
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: 0;
+            text-align: right;
+        }
+
+        .studio-container h2,
+        .studio-container .subtitle {
+            text-align: right;
+            margin-left: auto;
+            margin-right: 0;
+        }
+
+        .map-wrapper {
+            width: 100%;
+            height: 450px;
+            margin-top: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            filter: invert(90%) hue-rotate(180deg) contrast(1.2) sepia(20%);
+            transition: filter 0.3s ease;
+        }
+
+        .map-wrapper:hover {
+            filter: none;
+        }
+
+        .map-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* =========================================
+       FOOTER SECTION
+       ========================================= */
+        .site-footer {
+            background-color: #030303;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 6rem 10% 2rem 10%;
+            position: relative;
+            z-index: 5;
+            /* Ensures it sits above the fixed background canvas */
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 4rem;
+            margin-bottom: 4rem;
+        }
+
+        .footer-brand h3 {
+            font-size: 3.5rem;
+            margin: 0 0 1rem 0;
+            color: #fff;
+        }
+
+        .footer-brand p {
+            font-size: 0.9rem;
+            color: #888;
+            margin: 0;
+            max-width: 300px;
+            text-shadow: none;
+        }
+
+        .footer-links h4,
+        .footer-contact h4 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            margin: 0 0 1.5rem 0;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 1rem;
+        }
+
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            transition: color 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .footer-links a:hover {
+            color: #8a0303;
+        }
+
+        .footer-contact p {
+            font-size: 0.9rem;
+            color: #ccc;
+            line-height: 1.8;
+            margin: 0 0 1rem 0;
+            letter-spacing: 1.5px;
+            text-shadow: none;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 2rem;
+            text-align: center;
+        }
+
+        .footer-bottom p {
+            font-size: 0.8rem;
+            color: #555;
+            margin: 0 auto;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-shadow: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <a href="#artists">Artists</a>
+        <a href="#portfolio">Portfolio</a>
+        <a href="#studio">The Studio</a>
+    </nav>
+
+    <div id="canvas-container">
+        <canvas id="hero-canvas"></canvas>
+        <div class="video-overlay"></div>
+    </div>
+
+    <main id="content-wrapper">
+
+        <section class="content-section hero-section">
+            <h1>Rhino <br>Inks</h1>
+            <p>Best Tattoo Studio in Golaghat.</p>
+            <a href="#consultation" class="btn-primary">Book Consultation</a>
+        </section>
+
+        <section id="artists" class="content-section">
+            <h2>Resident Artists</h2>
+            <p class="subtitle">Masters of their respective disciplines, committed to singular, custom designs.</p>
+
+            <div class="artists-grid">
+                <div class="artist-card">
+                    <img src="https://images.unsplash.com/photo-1598371839696-5e5bb00b059b?q=80&w=800&auto=format&fit=crop"
+                        alt="Artist 1">
+                    <div class="artist-info">
+                        <h3>Elias Vance</h3>
+                        <span>Realism / Blackwork</span>
+                    </div>
+                </div>
+                <div class="artist-card">
+                    <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=800&auto=format&fit=crop"
+                        alt="Artist 2">
+                    <div class="artist-info">
+                        <h3>Sarah Thorne</h3>
+                        <span>Fine Line / Micro</span>
+                    </div>
+                </div>
+                <div class="artist-card">
+                    <img src="https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?q=80&w=800&auto=format&fit=crop"
+                        alt="Artist 3">
+                    <div class="artist-info">
+                        <h3>Marcus Ren</h3>
+                        <span>Traditional / Neo</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="portfolio" class="content-section">
+            <h2>The Archives</h2>
+            <p class="subtitle">A curated selection of our most recent custom pieces.</p>
+
+            <div class="portfolio-grid">
+                <div class="portfolio-item"><img
+                        src="https://images.unsplash.com/photo-1568515045052-f9a854d70bfd?q=80&w=600&auto=format&fit=crop"
+                        alt="Work 1"></div>
+                <div class="portfolio-item"><img
+                        src="https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?q=80&w=600&auto=format&fit=crop"
+                        alt="Work 2"></div>
+                <div class="portfolio-item"><img
+                        src="https://images.unsplash.com/photo-1598371839696-5e5bb00b059b?q=80&w=600&auto=format&fit=crop"
+                        alt="Work 3"></div>
+                <div class="portfolio-item"><img
+                        src="https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=600&auto=format&fit=crop"
+                        alt="Work 4"></div>
+                <div class="portfolio-item"><img
+                        src="https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=600&auto=format&fit=crop"
+                        alt="Work 5"></div>
+                <div class="portfolio-item"><img
+                        src="https://images.unsplash.com/photo-1568515045052-f9a854d70bfd?q=80&w=600&auto=format&fit=crop"
+                        alt="Work 6"></div>
+                <div class="portfolio-item"><img
+                        src="https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?q=80&w=600&auto=format&fit=crop"
+                        alt="Work 7"></div>
+                <div class="portfolio-item"><img
+                        src="https://images.unsplash.com/photo-1598371839696-5e5bb00b059b?q=80&w=600&auto=format&fit=crop"
+                        alt="Work 8"></div>
+            </div>
+
+            <div style="text-align: center;">
+                <a href="https://instagram.com/yourusername" target="_blank" class="btn-secondary">View Complete
+                    Portfolio on Instagram</a>
+            </div>
+        </section>
+
+        <section id="studio" class="content-section">
+            <div class="studio-container">
+                <h2>The Studio</h2>
+                <p class="subtitle" style="margin-bottom: 0;">A private, sterile, and refined environment designed
+                    strictly for your comfort.</p>
+
+                <div class="map-wrapper">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4448.474163651186!2d93.9721985!3d26.522202699999994!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x37468f7fb117f771%3A0x6d09add1bab0b2ee!2sRhino%20inks%20tattoo%20studio%20%7C%20best%20tattoo%20studio%20in%20Golaghat%2C%20Assam!5e1!3m2!1sen!2sin!4v1779803544143!5m2!1sen!2sin"
+                        style="border:0;" allowfullscreen="" loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3>Rhino Inks</h3>
+                <p>Premium bespoke tattooing and body modification based in the heart of the city.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Our Services</h4>
+                <ul>
+                    <li><a href="#services">Tattoo Artist</a></li>
+                    <li><a href="#services">Tattoo Removal</a></li>
+                    <li><a href="#services">Portrait Tattoo</a></li>
+                    <li><a href="#services">Realistic Tattoo</a></li>
+                    <li><a href="#services">Piercing</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h4>The Parlour</h4>
+                <p>123 Obsidian Way<br>Golaghat, Assam 785621</p>
+                <p>appointments@bloodandink.com<br>+91 98765 43210</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Rhino Inks. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const canvas = document.getElementById("hero-canvas");
+            const context = canvas.getContext("2d");
+
+            // ==========================================
+            // CONFIGURATION
+            // ==========================================
+            const frameCount = 240; // Total number of images
+
+            const currentFrame = index => (
+                `./frames/ezgif-frame-${index.toString().padStart(3, '0')}.jpg`
+            )
+            // ==========================================
+
+            const preloadImages = () => {
+                for (let i = 1; i <= frameCount; i++) {
+                    const img = new Image();
+                    img.src = currentFrame(i);
+                }
+            };
+
+            const img = new Image();
+            img.src = currentFrame(1);
+
+            img.onload = function () {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                context.drawImage(img, 0, 0);
+            }
+
+            const updateImage = index => {
+                img.src = currentFrame(index);
+                context.drawImage(img, 0, 0);
+            }
+
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.scrollY;
+
+                // THE FIX: Calculate max scroll based ONLY on the main content area, ignoring the footer.
+                // This forces the video to reach 100% (the last frame) exactly when the map enters the screen.
+                const contentWrapper = document.getElementById('content-wrapper');
+                const maxScrollTop = contentWrapper.offsetHeight - window.innerHeight;
+
+                let scrollFraction = scrollTop / maxScrollTop;
+
+                // Clamps the math so the video never tries to scroll past its final frame
+                scrollFraction = Math.max(0, Math.min(1, scrollFraction));
+
+                const frameIndex = Math.min(
+                    frameCount - 1,
+                    Math.floor(scrollFraction * frameCount)
+                );
+
+                requestAnimationFrame(() => updateImage(frameIndex + 1));
+            });
+
+            preloadImages();
+        });
+    </script>
+
+</body>
+
+</html>
