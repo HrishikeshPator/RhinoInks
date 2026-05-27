@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rhino Inks</title>
     <style>
-        /* Google Fonts: UnifrakturMaguntia (Gothic/Tattoo Blackletter) and Cinzel (Razor-sharp serifs) */
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=UnifrakturMaguntia&display=swap');
+        /* Google Fonts: Cormorant Garamond (Elegant headings) and Outfit (Clean body) */
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@200;300;400;500;600;700&display=swap');
 
         body,
         html {
@@ -15,7 +15,7 @@
             padding: 0;
             background-color: #050505;
             color: #fff;
-            font-family: 'Cinzel', serif;
+            font-family: 'Outfit', sans-serif;
             overflow-x: hidden;
         }
 
@@ -93,10 +93,10 @@
         h1,
         h2,
         h3 {
-            font-family: 'UnifrakturMaguntia', cursive;
-            font-weight: normal;
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 300;
             margin-top: 0;
-            letter-spacing: 2px;
+            letter-spacing: 4px;
         }
 
         h1 {
@@ -134,8 +134,9 @@
         .btn-secondary {
             display: inline-block;
             padding: 1.2rem 3.5rem;
+            font-family: 'Outfit', sans-serif;
             font-size: 0.9rem;
-            font-weight: 700;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 3px;
             text-decoration: none;
@@ -185,60 +186,186 @@
             padding-right: 40%;
         }
 
-        /* Artists Grid */
-        .artists-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 3rem;
-            width: 100%;
-            max-width: 1400px;
+        /* Featured Artist Section */
+        .artist-profile {
+            display: flex;
+            align-items: center;
+            gap: 5rem;
+            max-width: 1100px;
             margin: 0 auto;
+            width: 100%;
         }
 
-        .artist-card {
+        .artist-photo-wrapper {
+            flex-shrink: 0;
             position: relative;
-            aspect-ratio: 3/4;
-            overflow: hidden;
-            cursor: pointer;
         }
 
-        .artist-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: grayscale(100%) brightness(0.7) contrast(1.2);
-            transition: transform 0.6s ease, filter 0.6s ease;
-        }
-
-        .artist-card:hover img {
-            transform: scale(1.05);
-            filter: grayscale(0%) brightness(1) contrast(1);
-        }
-
-        .artist-info {
+        .artist-photo-wrapper::before {
+            content: '';
             position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 2rem;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.95), transparent);
-            box-sizing: border-box;
+            top: -8px;
+            left: -8px;
+            right: -8px;
+            bottom: -8px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8a0303, #2a0101, #8a0303);
+            z-index: -1;
+            animation: rotateGlow 6s linear infinite;
         }
 
-        .artist-info h3 {
-            margin: 0 0 5px 0;
-            font-size: 3rem;
-            text-align: left;
+        @keyframes rotateGlow {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
         }
 
-        .artist-info span {
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #8a0303;
-            text-align: left;
+        .artist-photo-wrapper img {
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            object-fit: cover;
             display: block;
+            border: 3px solid rgba(138, 3, 3, 0.4);
+            filter: grayscale(20%) contrast(1.1);
+            transition: filter 0.5s ease, transform 0.5s ease;
+        }
+
+        .artist-photo-wrapper:hover img {
+            filter: grayscale(0%) contrast(1);
+            transform: scale(1.03);
+        }
+
+        .artist-details {
+            flex: 1;
+        }
+
+        .artist-details h3 {
+            font-size: 4rem;
+            margin: 0 0 0.5rem 0;
+            letter-spacing: 3px;
+            line-height: 1.1;
+        }
+
+        .artist-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: #8a0303;
+            margin-bottom: 2rem;
+            display: block;
+        }
+
+        .artist-details p {
+            font-size: 1rem;
+            color: #aaa;
+            line-height: 1.9;
+            max-width: 500px;
+            margin-bottom: 2rem;
+            text-shadow: none;
+        }
+
+        .artist-stats {
+            display: flex;
+            gap: 3rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.8rem;
+            font-weight: 300;
+            color: #fff;
+            display: block;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #666;
+            margin-top: 0.5rem;
+            display: block;
+        }
+
+        .artist-studios {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .artist-studios span.label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #555;
+        }
+
+        .studio-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #ccc;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            padding: 0.6rem 1.2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .studio-link:hover {
+            border-color: #8a0303;
+            color: #fff;
+            background: rgba(138, 3, 3, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .studio-link svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        @media (max-width: 768px) {
+            .artist-profile {
+                flex-direction: column;
+                text-align: center;
+                gap: 3rem;
+            }
+
+            .artist-photo-wrapper img {
+                width: 240px;
+                height: 240px;
+            }
+
+            .artist-details h3 {
+                font-size: 2.8rem;
+            }
+
+            .artist-details p {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .artist-stats {
+                justify-content: center;
+            }
+
+            .artist-studios {
+                justify-content: center;
+            }
         }
 
         /* Portfolio Grid */
@@ -343,7 +470,7 @@
 
         .footer-links h4,
         .footer-contact h4 {
-            font-family: 'Cinzel', serif;
+            font-family: 'Outfit', sans-serif;
             font-size: 1.2rem;
             font-weight: 700;
             letter-spacing: 3px;
@@ -404,7 +531,7 @@
 <body>
 
     <nav>
-        <a href="#artists">Artists</a>
+        <a href="#artist">Artist</a>
         <a href="#portfolio">Portfolio</a>
         <a href="#studio">The Studio</a>
     </nav>
@@ -422,33 +549,41 @@
             <a href="https://wa.me/918099630053" target="_blank" class="btn-primary">Book Consultation</a>
         </section>
 
-        <section id="artists" class="content-section">
-            <h2>Resident Artists</h2>
-            <p class="subtitle">Masters of their respective disciplines, committed to singular, custom designs.</p>
+        <section id="artist" class="content-section">
+            <h2>The Artist</h2>
+            <p class="subtitle">The vision and craftsmanship behind every piece at Rhino Inks.</p>
 
-            <div class="artists-grid">
-                <div class="artist-card">
-                    <img src="https://images.unsplash.com/photo-1598371839696-5e5bb00b059b?q=80&w=800&auto=format&fit=crop"
-                        alt="Artist 1">
-                    <div class="artist-info">
-                        <h3>Elias Vance</h3>
-                        <span>Realism / Blackwork</span>
-                    </div>
+            <div class="artist-profile">
+                <div class="artist-photo-wrapper">
+                    <img src="./assets/sudipta.png" alt="Sudipta Bora - Tattoo Artist">
                 </div>
-                <div class="artist-card">
-                    <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=800&auto=format&fit=crop"
-                        alt="Artist 2">
-                    <div class="artist-info">
-                        <h3>Sarah Thorne</h3>
-                        <span>Fine Line / Micro</span>
+                <div class="artist-details">
+                    <h3>Sudipta Bora</h3>
+                    <span class="artist-title">Founder & Lead Artist</span>
+
+                    <div class="artist-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">6+</span>
+                            <span class="stat-label">Years Exp.</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">2</span>
+                            <span class="stat-label">Studios</span>
+                        </div>
                     </div>
-                </div>
-                <div class="artist-card">
-                    <img src="https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?q=80&w=800&auto=format&fit=crop"
-                        alt="Artist 3">
-                    <div class="artist-info">
-                        <h3>Marcus Ren</h3>
-                        <span>Traditional / Neo</span>
+
+                    <p>With over 6 years of dedicated experience in the art of tattooing, Sudipta brings a refined eye for detail and a passion for creating bespoke, meaningful pieces. His journey through prestigious studios has forged a unique style rooted in precision and artistry.</p>
+
+                    <div class="artist-studios">
+                        <span class="label">Previously at →</span>
+                        <a href="https://www.instagram.com/oak_tattoo_studio/" target="_blank" class="studio-link">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                            Oak Tattoo
+                        </a>
+                        <a href="https://www.instagram.com/ocean_ink_tattoos_guwahati/" target="_blank" class="studio-link">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                            Ocean Ink
+                        </a>
                     </div>
                 </div>
             </div>
